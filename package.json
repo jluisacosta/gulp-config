@@ -4,7 +4,8 @@
   "description": "gulp dev environment",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,8 @@
     "babel-core": "^6.10.4",
     "babel-preset-es2015": "^6.9.0",
     "babel-register": "^6.9.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-connect": "^4.1.0",
