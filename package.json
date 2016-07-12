@@ -26,7 +26,9 @@
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-connect": "^4.1.0",
+    "gulp-imagemin": "^3.0.1",
     "gulp-pug": "^3.0.3",
+    "gulp-smoosher": "0.0.9",
     "gulp-stylus": "^2.5.0"
   }
 }

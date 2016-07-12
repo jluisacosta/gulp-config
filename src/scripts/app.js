@@ -4,5 +4,5 @@ import myFunction from './myfunction';
 var myObject = new MyClass('World');
 myObject.sayHello();
 
-//Loop function
+//Loop function example
 myFunction(10);
