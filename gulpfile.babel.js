@@ -9,25 +9,58 @@ import filesystem from 'fs';
 import smoosh from 'gulp-smoosher';
 import imagemin from 'gulp-imagemin';
 
-gulp.task('server', () => {
-  connect.server({
-    root: 'build',//dist for production
+var config = {
+  server: {
+    root: 'build',
     port: 8080,
     livereload: true
+  },
+  views: {
+    src: './src/views/index.pug',
+    watch: './src/views/**/*.pug',
+    dest: './build'
+  },
+  styles: {
+    src: './src/styles/app.styl',
+    watch: './src/styles/**/*.styl',
+    dest: './build'
+  },
+  scripts: {
+    src: './src/scripts/app.js',
+    watch: './src/scripts/**/*.js',
+    dest: './build/app.js'
+  },
+  dist: {
+    html: {
+      src: './build/index.html',
+      dest: './dist'
+    },
+    img: {
+      src: './build/img/*',
+      dest: './dist/img'
+    }
+  }
+};
+
+gulp.task('server', () => {
+  connect.server({
+    root: config.server.root,
+    port: config.server.port,
+    livereload: config.server.livereload
   });
 });
 
 gulp.task('build:html', () => {
-  gulp.src('./src/views/**/*.pug')
+  gulp.src(config.views.src)
     .pipe(pug({
       pretty: false
     }))
-    .pipe(gulp.dest('./build'))
+    .pipe(gulp.dest(config.views.dest))
     .pipe(connect.reload());
 });
 
 gulp.task('build:css', () => {
-  gulp.src('./src/styles/**/*.styl')
+  gulp.src(config.styles.src)
     .pipe(stylus({
       'inlcude-css': true,
       compress: true
@@ -35,7 +68,7 @@ gulp.task('build:css', () => {
     .pipe(autoprefixer({
       browsers: ['last 2 versions']
     }))
-    .pipe(gulp.dest('./build/css'))
+    .pipe(gulp.dest(config.styles.dest))
     .pipe(connect.reload());
 });
 
@@ -46,23 +79,25 @@ gulp.task('build:js', () => {
       compact: true,
       minified: true
     }))
-    .require("./src/scripts/app.js", { entry: true })
+    .require(config.scripts.src, {
+      entry: true
+    })
     .bundle()
     .on("error", (error) => {
       console.log("Error: " + error.message);
     })
-    .pipe(filesystem.createWriteStream("./build/js/app.js"));
+    .pipe(filesystem.createWriteStream(config.scripts.dest));
 });
 
 gulp.task('livereload', () => {
-  gulp.src('./src/scripts/**/*.js')
+  gulp.src(config.scripts.watch)
     .pipe(connect.reload());
 });
 
 gulp.task('watch', () => {
-  gulp.watch('./src/views/**/*.pug', ['build:html']);
-  gulp.watch('./src/styles/**/*.styl', ['build:css']);
-  gulp.watch('./src/scripts/**/*.js', ['build:js', 'livereload']);
+  gulp.watch(config.views.watch, ['build:html']);
+  gulp.watch(config.styles.watch, ['build:css']);
+  gulp.watch(config.scripts.watch, ['build:js', 'livereload']);
 });
 
 gulp.task('build',['build:css', 'build:js', 'build:html']);
@@ -70,15 +105,15 @@ gulp.task('build',['build:css', 'build:js', 'build:html']);
 gulp.task('default', ['server','watch', 'build']);
 
 gulp.task('dist:html', () => {
-  gulp.src('./build/index.html')
+  gulp.src(config.dist.html.src)
     .pipe(smoosh())
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest(config.dist.html.dest));
 });
 
 gulp.task('dist:image_opt', () => {
-  gulp.src('./build/img/*')
+  gulp.src(config.dist.img.src)
     .pipe(imagemin())
-    .pipe(gulp.dest('./dist/img'));
+    .pipe(gulp.dest(config.dist.img.dest));
 });
 
 gulp.task('dist',['dist:html', 'dist:image_opt']);
